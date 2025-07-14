@@ -1,2 +1,2 @@
 # ai_assistant
-奇怪のai
+ai的赛博精神病

@@ -84,7 +84,7 @@ Pygments==2.19.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 pytz==2023.3.post1
-pywin32==308
+pywin32==300; sys_platform == 'win32'
 PyYAML==6.0.1
 pyzmq==26.2.0
 referencing==0.31.1

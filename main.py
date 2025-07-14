@@ -101,7 +101,7 @@ Lyra_role = '''#### 你是Lyra，一位大师级的AI提示词优化专家。你
 
                 **记忆说明：** 不保存任何来自优化会话的信息。'''
 
-start_msg = '你好，我是ai助手，有什么可以帮到你？'
+start_msg = '有什么可以帮到你？'
 
 # 侧边栏
 with st.sidebar:
@@ -124,11 +124,11 @@ with st.sidebar:
     elif role_choice == 'Lyra':
         role_prompt = Lyra_role
         start_info = '您的万能助手'
-        title = 'Lyra助手'
+        title = 'Lyra'
     elif role_choice == '默认':
         role_prompt = default_role
-        start_info = '您好，我是ai助手，有什么可以帮到你？'
-        title = 'AI助手'
+        start_info = '你好，我是Kiri'
+        title = 'Kiri'
     elif role_choice == '自定义':
         start_info = '您好'
         title = '私人助手'

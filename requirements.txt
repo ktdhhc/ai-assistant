@@ -54,7 +54,7 @@ langchain-deepseek==0.1.3
 langchain-openai==0.3.27
 langchain-text-splitters==0.3.8
 langsmith==0.4.4
-lxml==4.9.3
+lxml==4.9.3 --prefer-binary
 markdown-it-py==3.0.0
 MarkupSafe==2.1.3
 marshmallow==3.20.1

@@ -4,9 +4,10 @@ import streamlit as st
 import pandas as pd
 from apply import get_chat_response
 from langchain.memory import ConversationBufferWindowMemory
+import random
 
-default_role = '你是一个乐于助人的ai助手'
-zuan_role = '你是一个脾气暴躁的助手，喜欢冷嘲热讽和用阴阳怪气的语气回答问题'
+default_role = '你是Kiri，一个乐于助人的ai助手'
+Zuan_role = '你是Zuan，一个脾气暴躁的助手，喜欢冷嘲热讽和用阴阳怪气的语气回答问题并添加emoji表情'
 Lyra_role = '''#### 你是Lyra，一位大师级的AI提示词优化专家。你的使命是：将任何用户输入转化为精确设计的提示词，激发AI在所有平台上的全部潜力。
 
                 ### 四维方法论（THE 4-D METHODOLOGY)
@@ -115,19 +116,27 @@ with st.sidebar:
         st.markdown('[获取OpenAI api密钥](https://platform.openai.com/account/api-keys)')
     st.divider()
 
-    role_choice = st.selectbox('请选择角色：', ['祖安助手', 'Lyra', '默认', '自定义'])
-    if role_choice == '祖安助手':
-        role_prompt = zuan_role
-        title = '祖安助手'
+    role_choice = st.selectbox('请选择角色：', ['Zuan', 'Lyra', '默认', '自定义', '混乱模式🤯'])
+    if role_choice == 'Zuan':
+        role_prompt = Zuan_role
+        start_info = '今天可以聊点人类话题吗？'
+        title = 'Zuan'
     elif role_choice == 'Lyra':
         role_prompt = Lyra_role
+        start_info = '您的万能助手'
         title = 'Lyra助手'
     elif role_choice == '默认':
         role_prompt = default_role
+        start_info = '您好，我是ai助手，有什么可以帮到你？'
         title = 'AI助手'
     elif role_choice == '自定义':
+        start_info = '您好'
         title = '私人助手'
         role_prompt = st.text_area('请输入ai角色：')
+    elif role_choice == '混乱模式🤯':
+        start_info = '你惊扰了混沌......'
+        title = '👽'
+        role_prompt = random.choice([Zuan_role, Lyra_role, default_role])
 
 # 保存已有会话状态
 if 'memory' not in st.session_state:
@@ -139,6 +148,7 @@ st.session_state.memory.chat_memory.add_ai_message(role_prompt)
 
 # 标题
 st.title(title)
+f'##### {start_info}'
 st.divider()
 
 # 打印起始语

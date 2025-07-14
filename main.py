@@ -132,9 +132,10 @@ with st.sidebar:
 # 保存已有会话状态
 if 'memory' not in st.session_state:
     st.session_state.memory = ConversationBufferWindowMemory(return_messages=True, k=10)
-    st.session_state.memory.chat_memory.add_ai_message(role_prompt)
     st.session_state['messages'] = [{'role': 'ai',
                                      'content': start_msg}]
+    
+st.session_state.memory.chat_memory.add_ai_message(role_prompt)
 
 # 标题
 st.title(title)

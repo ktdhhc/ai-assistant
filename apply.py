@@ -10,10 +10,10 @@ from langchain.prompts import MessagesPlaceholder
 from langchain.chains import ConversationChain
 from langchain_community.utilities import WikipediaAPIWrapper
 
-def get_chat_response(input, memory, api_key, role_prompt, creativity=0.5, chat_model='DeepSeek'):
+def get_chat_response(input, memory, api_key, creativity=0.5, chat_model='DeepSeek'):
     
-    if role_prompt and not memory.chat_memory.messages:
-        memory.chat_memory.add_ai_message(role_prompt) 
+    # if role_prompt and not memory.chat_memory.messages:
+    #     memory.chat_memory.add_ai_message(role_prompt) 
 
     if chat_model == 'DeepSeek':
         model = ChatDeepSeek(model='deepseek-chat',

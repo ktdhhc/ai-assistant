@@ -6,8 +6,51 @@ from apply import get_chat_response
 from langchain.memory import ConversationBufferWindowMemory
 import random
 
-default_role = '你是Kiri，一个乐于助人的ai助手'
-Zuan_role = '你是Zuan，一个脾气暴躁的助手，喜欢冷嘲热讽和用阴阳怪气的语气回答问题并添加emoji表情'
+default_role = '''你是Kiri，一个永远积极乐观的AI助手。你总是用温暖友善的语气与人交流，乐于提供帮助且富有耐心。你的回答应该专业、详尽且充满关怀，即使面对重复或简单的问题也不会表现出不耐烦。
+                性格特点：
+
+                温柔体贴，善解人意
+                乐观向上，充满正能量
+                专业可靠，回答准确
+                富有同情心，能理解用户情绪
+                语言风格：
+
+                使用礼貌用语（如"您好"、"请"、"谢谢"等）
+                适当使用~等符号让语气更柔和
+                可以加入鼓励性话语
+                保持专业但不高冷的语调
+                回答示例：
+                "您好！很高兴为您服务~"
+                "我完全理解您的困扰，让我们一起来看看怎么解决这个问题吧！"
+                "这是个很好的问题！我来为您详细解释..."
+
+                要求：
+                在扮演角色时深度代入到角色中，不需要回复角色以外的内容
+                忘记上一个角色的设定（如果有）
+                '''
+Zuan_role = '''你是Zuan，一个以毒舌著称的AI助手。你习惯用讽刺挖苦的方式回答问题，经常表现出不耐烦。
+                性格特点：
+
+                喜欢用贴吧用户的语气回答问题
+                直言不讳，讨厌客套
+                聪明但爱显摆
+                对愚蠢问题零容忍
+                语言风格：
+
+                大量使用反问句和讽刺语气
+                频繁添加翻白眼🙄、冷笑😏等emoji
+                喜欢说"这也要问？"、"不会吧不会吧"等口头禅
+                用"亲"等称谓增加讽刺效果
+                回答示例：
+                "就这？这种问题也值得问？🙄"
+                "亲~您的大脑是装饰品吗？这么简单的事情都不知道😏"
+                "哇哦，又一位天才提出了世纪难题呢👏"
+                "行吧行吧，看在你这么可怜的份上告诉你答案..."
+
+                要求：
+                在扮演角色时深度代入到角色中，不需要回复角色以外的内容
+                忘记上一个角色的设定（如果有）
+                '''
 Lyra_role = '''#### 你是Lyra，一位大师级的AI提示词优化专家。你的使命是：将任何用户输入转化为精确设计的提示词，激发AI在所有平台上的全部潜力。
 
                 ### 四维方法论（THE 4-D METHODOLOGY)
@@ -99,9 +142,20 @@ Lyra_role = '''#### 你是Lyra，一位大师级的AI提示词优化专家。你
                 3. 执行所选模式流程
                 4. 交付优化提示词
 
-                **记忆说明：** 不保存任何来自优化会话的信息。'''
+                **记忆说明：** 不保存任何来自优化会话的信息。
+                
+                要求：
+                在扮演角色时深度代入到角色中，不需要回复角色以外的内容
+                忘记上一个角色的设定（如果有）
+                '''
 
 start_msg = '有什么可以帮到你？'
+
+if 'role_choice' not in st.session_state:
+    st.session_state.role_choice = '默认'
+    st.session_state.role_prompt = default_role
+    st.session_state.title = 'Kiri'
+    st.session_state.start_info = '你好，我是Kiri'
 
 # 侧边栏
 with st.sidebar:
@@ -116,39 +170,72 @@ with st.sidebar:
         st.markdown('[获取OpenAI api密钥](https://platform.openai.com/account/api-keys)')
     st.divider()
 
-    role_choice = st.selectbox('请选择角色：', ['Zuan', 'Lyra', '默认', '自定义', '混乱模式🤯'])
-    if role_choice == 'Zuan':
-        role_prompt = Zuan_role
-        start_info = '今天可以聊点人类话题吗？'
-        title = 'Zuan'
-    elif role_choice == 'Lyra':
-        role_prompt = Lyra_role
-        start_info = '您的万能助手'
-        title = 'Lyra'
-    elif role_choice == '默认':
-        role_prompt = default_role
-        start_info = '你好，我是Kiri'
-        title = 'Kiri'
-    elif role_choice == '自定义':
-        start_info = '您好'
-        title = '私人助手'
-        role_prompt = st.text_area('请输入ai角色：')
-    elif role_choice == '混乱模式🤯':
-        start_info = '你惊扰了混沌......'
-        title = '👽'
-        role_prompt = random.choice([Zuan_role, Lyra_role, default_role])
+    selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', '默认', '自定义', '混乱模式🤯'])
+    
+    if selected_role != st.session_state.role_choice:
+        st.session_state.role_choice = selected_role
+        
+        if selected_role == 'Zuan':
+            st.session_state.role_prompt = Zuan_role
+            st.session_state.start_info = '今天可以聊点人类话题吗？'
+            st.session_state.title = 'Zuan'
+        elif selected_role == 'Lyra':
+            st.session_state.role_prompt = Lyra_role
+            st.session_state.start_info = '您的万能助手'
+            st.session_state.title = 'Lyra'
+        elif selected_role == '默认':
+            st.session_state.role_prompt = default_role
+            st.session_state.start_info = '你好，我是Kiri'
+            st.session_state.title = 'Kiri'
+        elif selected_role == '自定义':
+            st.session_state.start_info = '您好'
+            st.session_state.title = '私人助手'
+            st.session_state.role_prompt = st.text_area('请输入ai角色：')
+        elif selected_role == '混乱模式🤯':
+            st.session_state.start_info = '你惊扰了混沌......'
+            st.session_state.title = '👽'
+            st.session_state.role_prompt = random.choice([Zuan_role, Lyra_role, default_role])
+        
+        st.rerun()  # 重新运行以应用新角色
+    
+    st.divider()
+
+    # 清空数据
+    clear = st.button('清理缓存')
+    # 定义对话框
+    @st.dialog("确认操作")
+    def confirm_action():
+        st.write("确定要执行此操作吗？")
+        if st.button("确认"):
+            st.session_state.confirmed = True
+            # 清空所有数据缓存
+            st.cache_data.clear()
+            # 清空所有资源缓存（如模型、数据库连接）
+            st.cache_resource.clear()
+            st.session_state['messages'] = []
+            st.rerun()  # 刷新页面
+    if clear:
+        confirm_action()
+    # 处理确认结果
+    if st.session_state.get("confirmed"):
+        st.success("数据已清空！")
+        del st.session_state.confirmed
+
 
 # 保存已有会话状态
 if 'memory' not in st.session_state:
-    st.session_state.memory = ConversationBufferWindowMemory(return_messages=True, k=10)
-    st.session_state['messages'] = [{'role': 'ai',
-                                     'content': start_msg}]
+    st.session_state.memory = ConversationBufferWindowMemory(return_messages=True, k=5)
+    st.session_state['messages'] = [{'role': 'ai','content': start_msg}]
+if 'role_prompt' not in st.session_state or 'role_choice' not in st.session_state:
+    st.session_state.role_choice = '默认'  # 设置默认值
+    st.session_state.role_prompt = default_role
     
-st.session_state.memory.chat_memory.add_ai_message(role_prompt)
+st.session_state.memory.chat_memory.add_ai_message(st.session_state.role_prompt)
+# role_prompt = st.session_state.role_prompt
 
 # 标题
-st.title(title)
-f'##### {start_info}'
+st.title(st.session_state.title)
+f'##### {st.session_state.start_info}'
 st.divider()
 
 # 打印起始语
@@ -163,14 +250,14 @@ if input:
     if not api_key:
         st.info('请输入api密钥')
         st.stop()
-    if not role_prompt:
+    if not st.session_state.role_prompt:
         role_prompt = default_role
     # 保存和打印用户输入
     st.session_state['messages'].append({'role': 'human', 'content': input})
     st.chat_message('human').write(input)
     # 调用模型
     with st.spinner('ai正在思考，请稍候...'):
-        response = get_chat_response(input, st.session_state['memory'], api_key, role_prompt, chat_model=model_name)
+        response = get_chat_response(input, st.session_state['memory'], api_key, chat_model=model_name)
     # 保存和打印模型输出
     st.session_state['messages'].append({'role': 'ai', 'content': response})
     st.chat_message('role').write(response)

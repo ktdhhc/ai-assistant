@@ -1,5 +1,6 @@
 #!/usr/bin/python 3.10
 
+import os
 import streamlit as st
 import pandas as pd
 from apply import get_chat_response
@@ -21,11 +22,19 @@ with st.sidebar:
     online = st.checkbox('联网搜索（暂不可用）')
     st.divider()
 
-    api_key = st.text_input('请输入api：', type='password')
-    if model_name == 'DeepSeek':
-        st.markdown('[获取DeepSeek api密钥](https://platform.deepseek.com/usage)')
-    elif model_name == 'Chat_GPT':
-        st.markdown('[获取OpenAI api密钥](https://platform.openai.com/account/api-keys)')
+    # 滑动选项卡
+    tab1, tab2 = st.tabs(['API', '邀请码'])
+    with tab1:
+        api_key = st.text_input('请输入API：', type='password')
+        if model_name == 'DeepSeek':
+            st.markdown('[获取DeepSeek api密钥](https://platform.deepseek.com/usage)')
+        elif model_name == 'Chat_GPT':
+            st.markdown('[获取OpenAI api密钥](https://platform.openai.com/account/api-keys)')
+    with tab2:
+        code = st.text_input('请输入邀请码：', type='password')
+        if code == os.getenv("CODE"):
+            api_key = os.getenv("DEEPSEEK_API_KEY")
+
     st.divider()
 
     selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', 'Kiri', 'Neon', 'Luna', 'Zen', 'Dr. Chaos', 'B-79', '自定义', '混乱模式🤯'])
@@ -105,8 +114,8 @@ for message in st.session_state.messages:
 # 接收输入
 input = st.chat_input()
 if input:
-    if not api_key:
-        st.info('请输入api密钥')
+    if not api_key and not code:
+        st.info('请输入api密钥或邀请码')
         st.stop()
 
     # 保存和打印用户输入

@@ -1,7 +1,7 @@
 #!/usr/bin/python 3.10
 
 import os
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_deepseek import ChatDeepSeek
 from langchain_community.utilities import WikipediaAPIWrapper
@@ -12,8 +12,6 @@ from langchain_community.utilities import WikipediaAPIWrapper
 
 def get_chat_response(input, memory, api_key, creativity=0.5, chat_model='DeepSeek'):
     
-    # if role_prompt and not memory.chat_memory.messages:
-    #     memory.chat_memory.add_ai_message(role_prompt) 
 
     if chat_model == 'DeepSeek':
         model = ChatDeepSeek(model='deepseek-chat',

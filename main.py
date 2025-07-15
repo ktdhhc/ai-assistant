@@ -40,6 +40,8 @@ with st.sidebar:
     selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', 'Kiri', 'Neon', 'Luna', 'Zen', 'Dr. Chaos', 'B-79', '塞翁', '自定义', '混乱模式🤯'])
 
     if selected_role == '自定义':
+        with st.expander('创造力'):
+            creativity = st.slider('', value=0.5, min_value=0.0, max_value=1.0, step=0.01)
         custom_prompt = st.text_area('请输入AI角色设定：')
         custom_role = r.ChatRole(
             name="ai",
@@ -49,6 +51,7 @@ with st.sidebar:
         )
         role_manager.add_role(custom_role)
         current_role = custom_role
+        current_role.creativity = creativity
     elif selected_role == '混乱模式🤯':
         current_role = role_manager.get_random_role()
     else:
@@ -128,6 +131,7 @@ if input:
     with st.spinner('ai正在思考，请稍候...'):
         response = get_chat_response(input = input, 
                                      memory = st.session_state.memory, 
+                                     creativity = current_role.creativity,
                                      api_key = api_key, 
                                      chat_model = model_name)
         

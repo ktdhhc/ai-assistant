@@ -46,6 +46,7 @@ with st.sidebar:
         current_role = role_manager.get_role(selected_role)
 
     st.divider()
+    
 
     # 保存会话
     if 'memory' not in st.session_state:
@@ -61,6 +62,7 @@ with st.sidebar:
         # 注入角色提示词
         if selected_role != '混乱模式🤯':  # 混乱模式不固定提示
             st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
+
 
     # 清空数据
     clear = st.button('清理缓存')
@@ -111,23 +113,32 @@ if input:
     st.session_state.messages.append(HumanMessage(content=input))
     st.chat_message('human').write(input)
 
-    # === 混乱模式处理 ===
-    if selected_role == "混乱模式🤯":
-        # 每次对话获取新随机角色
-        current_role = role_manager.get_random_role()
-        st.session_state.current_chaos_role = current_role  # 存储当前角色
-        
-        # 重置记忆并注入新提示
-        st.session_state.memory = ConversationBufferWindowMemory(
-            return_messages=True, 
-            k=5,
-            memory_key="history",
-            input_key="input"
-        )
-        st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
+    # 重置记忆并注入新提示
+    st.session_state.memory = ConversationBufferWindowMemory(
+        return_messages=True, 
+        k=10,
+        memory_key="history",
+        input_key="input"
+    )
+    st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
 
-    elif custom_role:  # 自定义角色处理
-        st.session_state.memory.chat_memory.add_message(SystemMessage(content=custom_role.prompt))
+    # # === 混乱模式处理 ===
+    # if selected_role == "混乱模式🤯":
+    #     # 每次对话获取新随机角色
+    #     current_role = role_manager.get_random_role()
+    #     st.session_state.current_chaos_role = current_role  # 存储当前角色
+        
+    #     # 重置记忆并注入新提示
+    #     st.session_state.memory = ConversationBufferWindowMemory(
+    #         return_messages=True, 
+    #         k=5,
+    #         memory_key="history",
+    #         input_key="input"
+    #     )
+    #     st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
+
+    # elif custom_role:  # 自定义角色处理
+    #     st.session_state.memory.chat_memory.add_message(SystemMessage(content=custom_role.prompt))
 
 
     # 调用模型

@@ -58,7 +58,6 @@ with st.sidebar:
         current_role = role_manager.get_role(selected_role)
 
     st.divider()
-    
 
     # 保存会话
     if 'memory' not in st.session_state:

@@ -37,7 +37,7 @@ with st.sidebar:
 
     st.divider()
 
-    selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', 'Kiri', 'Neon', 'Luna', 'Zen', 'Dr. Chaos', 'B-79', '自定义', '混乱模式🤯'])
+    selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', 'Kiri', 'Neon', 'Luna', 'Zen', 'Dr. Chaos', 'B-79', '塞翁', '自定义', '混乱模式🤯'])
 
     if selected_role == '自定义':
         custom_prompt = st.text_area('请输入AI角色设定：')
@@ -122,6 +122,8 @@ if input:
     st.session_state.messages.append(HumanMessage(content=input))
     st.chat_message('human').write(input)
     st.session_state.memory.chat_memory.add_message(HumanMessage(content=input))
+
+    # 传入角色提示词
     st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
 
 
@@ -134,6 +136,8 @@ if input:
         
     # 保存和打印模型输出
     st.session_state.messages.append(AIMessage(content=response))
-    st.session_state.memory.chat_memory.add_message(AIMessage(content=response))
     st.chat_message('ai').write(response)
+
+    # 传入回答
+    st.session_state.memory.chat_memory.add_message(AIMessage(content=response))
 

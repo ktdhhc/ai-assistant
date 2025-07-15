@@ -2,7 +2,7 @@
 
 import streamlit as st
 import pandas as pd
-from p3_1.apply import get_chat_response
+from apply import get_chat_response
 from langchain.memory import ConversationBufferWindowMemory
 import random
 import importlib

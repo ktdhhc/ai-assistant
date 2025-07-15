@@ -68,9 +68,6 @@ with st.sidebar:
         )
         # 初始化消息
         st.session_state.messages = [AIMessage(content='有什么可以帮到您？')]
-        # 注入角色提示词
-        if selected_role != '混乱模式🤯':  # 混乱模式不固定提示
-            st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
 
 
     # 清空数据

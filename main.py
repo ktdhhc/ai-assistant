@@ -28,7 +28,7 @@ with st.sidebar:
         st.markdown('[获取OpenAI api密钥](https://platform.openai.com/account/api-keys)')
     st.divider()
 
-    selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', 'Kiri', '自定义', '混乱模式🤯'])
+    selected_role = st.selectbox('请选择角色：', ['Zuan', 'Lyra', 'Kiri', 'Neon', 'Luna', 'Zen', 'Dr. Chaos', 'B-79', '自定义', '混乱模式🤯'])
 
     if selected_role == '自定义':
         custom_prompt = st.text_area('请输入AI角色设定：')
@@ -53,7 +53,7 @@ with st.sidebar:
         # 初始化记忆
         st.session_state.memory = ConversationBufferWindowMemory(
             return_messages=True, 
-            k=5,
+            k=20,
             memory_key="history",  # 明确指定记忆键
             input_key="input"  # 明确指定输入键
         )
@@ -112,33 +112,8 @@ if input:
     # 保存和打印用户输入
     st.session_state.messages.append(HumanMessage(content=input))
     st.chat_message('human').write(input)
-
-    # 重置记忆并注入新提示
-    st.session_state.memory = ConversationBufferWindowMemory(
-        return_messages=True, 
-        k=10,
-        memory_key="history",
-        input_key="input"
-    )
+    st.session_state.memory.chat_memory.add_message(HumanMessage(content=input))
     st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
-
-    # # === 混乱模式处理 ===
-    # if selected_role == "混乱模式🤯":
-    #     # 每次对话获取新随机角色
-    #     current_role = role_manager.get_random_role()
-    #     st.session_state.current_chaos_role = current_role  # 存储当前角色
-        
-    #     # 重置记忆并注入新提示
-    #     st.session_state.memory = ConversationBufferWindowMemory(
-    #         return_messages=True, 
-    #         k=5,
-    #         memory_key="history",
-    #         input_key="input"
-    #     )
-    #     st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
-
-    # elif custom_role:  # 自定义角色处理
-    #     st.session_state.memory.chat_memory.add_message(SystemMessage(content=custom_role.prompt))
 
 
     # 调用模型
@@ -150,5 +125,6 @@ if input:
         
     # 保存和打印模型输出
     st.session_state.messages.append(AIMessage(content=response))
+    st.session_state.memory.chat_memory.add_message(AIMessage(content=response))
     st.chat_message('ai').write(response)
 

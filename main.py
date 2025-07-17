@@ -18,7 +18,7 @@ role_manager = r.RoleManager(default_roles)
 # 侧边栏
 with st.sidebar:
     
-    model_name = st.selectbox('请选择模型', ['DeepSeek', 'Chat_GPT'])
+    model_name = st.selectbox('请选择模型', ['DeepSeek(v3)', 'Chat_GPT(4.1-mini)', 'Chat_GPT(4-turbo)'], )
     online = st.checkbox('联网搜索（暂不可用）')
     st.divider()
 
@@ -26,14 +26,17 @@ with st.sidebar:
     tab1, tab2 = st.tabs(['API', '邀请码'])
     with tab1:
         api_key = st.text_input('请输入API：', type='password')
-        if model_name == 'DeepSeek':
+        if model_name == 'DeepSeek(v3)':
             st.markdown('[获取DeepSeek api密钥](https://platform.deepseek.com/usage)')
-        elif model_name == 'Chat_GPT':
+        elif model_name == 'Chat_GPT(4-turbo)' or model_name == 'Chat_GPT(4.1-mini)':
             st.markdown('[获取OpenAI api密钥](https://platform.openai.com/account/api-keys)')
     with tab2:
         code = st.text_input('请输入邀请码：', type='password')
         if code == os.getenv("CODE"):
-            api_key = os.getenv("DEEPSEEK_API_KEY")
+            if model_name == 'DeepSeek(v3)':
+                api_key = os.getenv("DEEPSEEK_API_KEY")
+            elif model_name == 'Chat_GPT(4-turbo)' or model_name == 'Chat_GPT(4.1-mini)':
+                api_key = os.getenv("OPENAI_API_KEY")
 
     st.divider()
 
@@ -111,16 +114,16 @@ for message in st.session_state.messages:
     st.chat_message(role).write(message.content)
 
 # 接收输入
-input = st.chat_input()
-if input:
+user_input = st.chat_input()
+if user_input:
     if not api_key and not code:
         st.info('请输入api密钥或邀请码')
         st.stop()
 
     # 保存和打印用户输入
-    st.session_state.messages.append(HumanMessage(content=input))
-    st.chat_message('human').write(input)
-    st.session_state.memory.chat_memory.add_message(HumanMessage(content=input))
+    st.session_state.messages.append(HumanMessage(content=user_input))
+    st.chat_message('human').write(user_input)
+    st.session_state.memory.chat_memory.add_message(HumanMessage(content=user_input))
 
     # 传入角色提示词
     st.session_state.memory.chat_memory.add_message(SystemMessage(content=current_role.prompt))
@@ -128,7 +131,7 @@ if input:
 
     # 调用模型
     with st.spinner('ai正在思考，请稍候...'):
-        response = get_chat_response(input = input, 
+        response = get_chat_response(input = user_input, 
                                      memory = st.session_state.memory, 
                                      creativity = current_role.creativity,
                                      api_key = api_key, 
